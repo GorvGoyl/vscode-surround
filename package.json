@@ -1,14 +1,15 @@
 {
     "name": "vscode-surround",
     "displayName": "Surround",
-    "description": "Surround selection with if, try-catch in Visual Studio Code",
-    "version": "1.0.1",
+    "description": "Surround selection with if, try-catch, for in Visual Studio Code",
+    "version": "1.0.2",
     "publisher": "Sword",
     "keywords": [
         "surround",
         "wrap",
         "if",
-        "try-catch"
+        "try-catch",
+        "for"
     ],
     "repository": {
         "type": "git",
@@ -25,7 +26,8 @@
     ],
     "activationEvents": [
         "onCommand:extension.surroundWithIf",
-        "onCommand:extension.surroundWithTry"
+        "onCommand:extension.surroundWithTry",
+        "onCommand:extension.surroundWithFor"
     ],
     "main": "./out/src/extension",
     "contributes": {
@@ -37,6 +39,10 @@
             {
                 "command": "extension.surroundWithTry",
                 "title": "Surround with try catch"
+            },
+            {
+                "command": "extension.surroundWithFor",
+                "title": "Surround with for loop"
             }
         ]
     },

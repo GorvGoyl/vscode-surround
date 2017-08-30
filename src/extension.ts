@@ -26,6 +26,29 @@ export function activate(context: vscode.ExtensionContext) {
         });
     });
 
+    let forSurround = vscode.commands.registerCommand('extension.surroundWithFor', async () => {
+        const editor = vscode.window.activeTextEditor
+        let selection = editor.selection
+        if (selection.isEmpty) {
+            selection = getCurrentLineSelection(selection)
+        }
+        const lines = getSelectLines(selection)
+        const startLine = lines[0]
+        const firstLineNumber = startLine.lineNumber
+        const endLine = lines[lines.length - 1]
+        await editor.edit(currentText => {
+            currentText.replace(startLine.range.union(endLine.range), surroundWithFor(selection));
+        });
+        await editor.edit(currentText => {
+            const firstLine = editor.document.lineAt(firstLineNumber)
+            editor.selection = new vscode.Selection(
+                new vscode.Position(firstLine.lineNumber, firstLine.firstNonWhitespaceCharacterIndex + 4),
+                new vscode.Position(firstLine.lineNumber, firstLine.firstNonWhitespaceCharacterIndex + 13)
+            );
+        });
+    });
+
+
     let trySurround = vscode.commands.registerCommand('extension.surroundWithTry', async () => {
         const editor = vscode.window.activeTextEditor
         let selection = editor.selection
@@ -49,6 +72,7 @@ export function activate(context: vscode.ExtensionContext) {
     });
 
     context.subscriptions.push(ifSurround);
+    context.subscriptions.push(forSurround);
     context.subscriptions.push(trySurround);
 }
 
@@ -61,7 +85,15 @@ function surroundWithIf(selection: vscode.Selection) {
         `${prefix}}`
     ].join('\n')
 }
-
+function surroundWithFor(selection: vscode.Selection) {
+    let lines = getSelectLines(selection)
+    const { prefix } = getPrefixAndIndent(lines[0])
+    return [
+        `${prefix}for(var i=0; i<n; i++) {`,
+        ...indentLines(lines),
+        `${prefix}}`
+    ].join('\n')
+}
 function surroundWithTry(selection: vscode.Selection) {
     let lines = getSelectLines(selection)
     const { prefix, indent } = getPrefixAndIndent(lines[0])
